@@ -3,7 +3,7 @@ import re
 
 class Account:
     def __init__(self, username, password, nationalcode, creditcard, email):
-        self.unsername = username
+        self.username = username
         self.password = password
         self.nationalcode = nationalcode  # it should be a string because the first digit can not be 0 in numbers but
         # we have national codes starting with 0
@@ -97,18 +97,38 @@ class Account:
 
 
 class Order:
-    def __init__(self, name, price, products:dict):
-        self.name=name
-        self.price=price
-        self.products=products
-        self.posted=False
+    def __init__(self, name, price, products: dict):
+        self.name = name
+        self.price = price
+        self.products = products
+        self.posted = False
 
     def add_product(self, product, amount, price_product):
         if self.posted is True:
             raise Exception("Unfortunately, your products have been sent by truck and you can't change anything.")
+        if product in self.products:
+            self.products[product] += amount
+            self.price += amount * price_product
+        else:
+            self.products[product] = amount
+            self.price += amount * price_product
 
     def remove_product(self, product, amount, price_product):
-        pass
+        if self.posted is True:
+            raise Exception("Unfortunately, your products have been sent by truck and you can't change anything.")
+        if product in self.products:
+            if self.products[product] > amount:
+                self.price -= amount * price_product
+                self.products[product] -= amount
+            else:
+                raise Exception("The request is over the limit.")
+
+        else:
+            return f"{product} is not in your cart."
 
     def send_order(self):
-        pass
+        self.posted = True
+        final = str()
+        for key in self.products.items():
+            final = final + key[0] + ": " + str(key[1]) + ", "
+        return f"Hi losPolos ,You have ordered {final[0:-2]} and the price will be {self.price}$."
