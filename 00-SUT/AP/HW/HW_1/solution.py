@@ -2,15 +2,15 @@ import re
 
 
 class Account:
-    def __init__(self, username:str, password:str, nationalcode, creditcard, email):
+    def __init__(self, username, password, nationalcode, creditcard, email):
         self.unsername = username
         self.password = password
-        self.nationalcode = nationalcode
+        self.nationalcode = nationalcode  # it should be a string because the first digit can not be 0 in numbers but
+        # we have national codes starting with 0
         self.creditcard = creditcard
         self.email = email
-        pass
 
-    def username_validation(self, username: str) -> None:
+    def username_validation(self, username):
         '''
         we check the username to meet the desired condition. It should start with at least 1 letter ( upper or lower
         case), followed by either a "." or "_" , then again letters and finish.
@@ -22,7 +22,7 @@ class Account:
         if match is None:
             raise Exception("invalid UserName")
 
-    def password_validation(self, password: str) -> None:
+    def password_validation(self, password):
         '''
         here we check that the password should have at least 1 lowercase letter, one uppercase letter,one digit and
         one of the symbols.Then we make sure that it is a combination of them with more than 8 characters.
@@ -35,26 +35,77 @@ class Account:
             raise Exception("invalid Password")
 
     def nationalcode_validation(self, nationalcode):
-        nationalcode=str(nationalcode)
-        sum=0
-        for i in nationalcode:
-            sum+= i * (len(nationalcode)-i.index()
-
-
+        digits = list(map(int, str(nationalcode)))
+        # to check all digits are not the same
+        if len(set(digits)) == 1:
+            raise Exception("invalide NationalCode")
+        last_digit = digits[-1]
+        digits.pop()  # to eliminate the control digit itself
+        summation = 0
+        for i in range(len(digits)):
+            summation += digits[i] * (len(digits) + 1 - i)
+        remainder = summation % 11
+        if remainder < 2:
+            control_digit = remainder
+        else:
+            control_digit = 11 - remainder
+        if last_digit != control_digit:
+            raise Exception("invalide NationalCode")
 
     def creditcard_validation(self, creditcard):
-        pass
+        digits = list(map(int, str(creditcard)))
+        summation = 0
+        for i in range(len(digits)):
+            # the conditions(odd and even indexes) are vice versa because the indexes start from 0
+            if i % 2 == 0:
+                temp = digits[i] * 2
+                if temp > 9:
+                    temp = temp - 9
+            else:
+                temp = digits[i]
+            summation += temp
+        A = summation % 10
+        if A != 0:
+            raise Exception("invalide CreditCard")
 
     def email_validation(self, email):
-        pass
+        parts = email.split("@")
+        # to make sure that there is only one @ in the string
+        if len(parts) > 2:
+            raise Exception("invalid Email")
+        else:
+            username = email.split("@")[0]
+            regex_pattern_1 = r"^[a-zA-Z._\d]+$"
+            match_1 = re.match(regex_pattern_1, username)
+            if match_1 is None:
+                raise Exception("invalid Email")
+            domain = email.split("@")[1].split(".")[0]
+            regex_pattern_2 = r"^[a-zA-Z\d]+$"
+            match_2 = re.match(regex_pattern_2, domain)
+            if match_2 is None:
+                raise Exception("invalid Email")
+            tld = email.split("@")[1].split(".")[1]
+            regex_pattern_3 = r"^[a-zA-Z]{2,3}$"
+            match_3 = re.match(regex_pattern_3, tld)
+            if match_3 is None:
+                raise Exception("invalid Email")
+            # to make sure that the username has 0 or 1 dot ,i.e, the whole email has at most 2 dots.
+            regex_pattern_4 = r"^([^.]*(\.[^.]*){0,2})$"
+            match_4 = re.match(regex_pattern_4, email)
+            if match_4 is None:
+                raise Exception("invalid Email")
 
 
 class Order:
-    def __init__(self, name, price, products):
-        pass
+    def __init__(self, name, price, products:dict):
+        self.name=name
+        self.price=price
+        self.products=products
+        self.posted=False
 
     def add_product(self, product, amount, price_product):
-        pass
+        if self.posted is True:
+            raise Exception("Unfortunately, your products have been sent by truck and you can't change anything.")
 
     def remove_product(self, product, amount, price_product):
         pass
