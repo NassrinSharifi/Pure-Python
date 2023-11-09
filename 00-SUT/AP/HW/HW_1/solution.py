@@ -131,4 +131,4 @@ class Order:
         final = str()
         for key in self.products.items():
             final = final + key[0] + ": " + str(key[1]) + ", "
-        return f"Hi losPolos ,You have ordered {final[0:-2]} and the price will be {self.price}$."
+        return f"Hi {self.name} ,You have ordered {final[0:-2]} and the price will be {self.price}$."
