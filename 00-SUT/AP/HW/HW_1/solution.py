@@ -3,12 +3,13 @@ import re
 
 class Account:
     def __init__(self, username, password, nationalcode, creditcard, email):
-        self.username = username
-        self.password = password
-        self.nationalcode = nationalcode  # it should be a string because the first digit can not be 0 in numbers but
+        self.username = self.username_validation(username)
+        self.password = self.password_validation(password)
+        self.nationalcode = self.nationalcode_validation(
+            nationalcode)  # it should be a string because the first digit can not be 0 in numbers but
         # we have national codes starting with 0
-        self.creditcard = creditcard
-        self.email = email
+        self.creditcard = self.creditcard_validation(creditcard)
+        self.email = self.email_validation(email)
 
     def username_validation(self, username):
         '''
@@ -21,6 +22,8 @@ class Account:
         match = re.match(regex_pattern, username)
         if match is None:
             raise Exception("invalid UserName")
+        else:
+            return username
 
     def password_validation(self, password):
         '''
@@ -33,24 +36,29 @@ class Account:
         match = re.match(regex_pattern, password)
         if match is None:
             raise Exception("invalid Password")
+        else:
+            return password
 
     def nationalcode_validation(self, nationalcode):
         digits = list(map(int, str(nationalcode)))
         # to check all digits are not the same
         if len(set(digits)) == 1:
             raise Exception("invalide NationalCode")
-        last_digit = digits[-1]
-        digits.pop()  # to eliminate the control digit itself
-        summation = 0
-        for i in range(len(digits)):
-            summation += digits[i] * (len(digits) + 1 - i)
-        remainder = summation % 11
-        if remainder < 2:
-            control_digit = remainder
         else:
-            control_digit = 11 - remainder
-        if last_digit != control_digit:
-            raise Exception("invalide NationalCode")
+            last_digit = digits[-1]
+            digits.pop()  # to eliminate the control digit itself
+            summation = 0
+            for i in range(len(digits)):
+                summation += digits[i] * (len(digits) + 1 - i)
+            remainder = summation % 11
+            if remainder < 2:
+                control_digit = remainder
+            else:
+                control_digit = 11 - remainder
+            if last_digit != control_digit:
+                raise Exception("invalide NationalCode")
+            else:
+                return nationalcode
 
     def creditcard_validation(self, creditcard):
         digits = list(map(int, str(creditcard)))
@@ -67,6 +75,8 @@ class Account:
         A = summation % 10
         if A != 0:
             raise Exception("invalide CreditCard")
+        else:
+            return creditcard
 
     def email_validation(self, email):
         parts = email.split("@")
@@ -94,6 +104,8 @@ class Account:
             match_4 = re.match(regex_pattern_4, email)
             if match_4 is None:
                 raise Exception("invalid Email")
+            if not None in [match_4, match_3, match_2, match_1]:
+                return email
 
 
 class Order:
