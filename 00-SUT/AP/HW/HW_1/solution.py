@@ -5,9 +5,7 @@ class Account:
     def __init__(self, username, password, nationalcode, creditcard, email):
         self.username = self.username_validation(username)
         self.password = self.password_validation(password)
-        self.nationalcode = self.nationalcode_validation(
-            nationalcode)  # it should be a string because the first digit can not be 0 in numbers but
-        # we have national codes starting with 0
+        self.nationalcode = self.nationalcode_validation(nationalcode)
         self.creditcard = self.creditcard_validation(creditcard)
         self.email = self.email_validation(email)
 
@@ -43,7 +41,7 @@ class Account:
         digits = list(map(int, str(nationalcode)))
         # to check all digits are not the same
         if len(set(digits)) == 1:
-            raise Exception("invalide NationalCode")
+            raise Exception("invalid NationalCode")
         else:
             last_digit = digits[-1]
             digits.pop()  # to eliminate the control digit itself
@@ -56,27 +54,30 @@ class Account:
             else:
                 control_digit = 11 - remainder
             if last_digit != control_digit:
-                raise Exception("invalide NationalCode")
+                raise Exception("invalid NationalCode")
             else:
                 return nationalcode
 
     def creditcard_validation(self, creditcard):
-        digits = list(map(int, str(creditcard)))
-        summation = 0
-        for i in range(len(digits)):
-            # the conditions(odd and even indexes) are vice versa because the indexes start from 0
-            if i % 2 == 0:
-                temp = digits[i] * 2
-                if temp > 9:
-                    temp = temp - 9
-            else:
-                temp = digits[i]
-            summation += temp
-        A = summation % 10
-        if A != 0:
-            raise Exception("invalide CreditCard")
+        if not len(creditcard) == 16:
+            raise Exception("invalid CreditCard")
         else:
-            return creditcard
+            digits = list(map(int, str(creditcard)))
+            summation = 0
+            for i in range(len(digits)):
+                # the conditions(odd and even indexes) are vice versa because the indexes start from 0
+                if i % 2 == 0:
+                    temp = digits[i] * 2
+                    if temp > 9:
+                        temp = temp - 9
+                else:
+                    temp = digits[i]
+                summation += temp
+            A = summation % 10
+            if A != 0:
+                raise Exception("invalid CreditCard")
+            else:
+                return creditcard
 
     def email_validation(self, email):
         parts = email.split("@")
