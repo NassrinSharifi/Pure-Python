@@ -87,7 +87,7 @@ class Account:
         else:
             username = email.split("@")[0]
             regex_pattern_1 = r"^[a-zA-Z._\d]+$"
-            match_1 = re.match(regex_pattern_1, username
+            match_1 = re.match(regex_pattern_1, username)
             if match_1 is None:
                 raise Exception("invalid Email")
             domain = email.split("@")[1].split(".")[0]
