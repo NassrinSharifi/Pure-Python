@@ -101,8 +101,8 @@ class Account:
             if match_3 is None:
                 raise Exception("invalid Email")
             # to make sure that the username has 0 or 1 dot ,i.e, the whole email has at most 2 dots.
-            regex_pattern_4 = r"^([^.]*(\.[^.]*){0,2})$"
-            match_4 = re.match(regex_pattern_4, email)
+            regex_pattern_4 = r"^([^.]*(\.[^.]*){0,1})$"
+            match_4 = re.match(regex_pattern_4, username)
             if match_4 is None:
                 raise Exception("invalid Email")
             if not None in [match_4, match_3, match_2, match_1]:
