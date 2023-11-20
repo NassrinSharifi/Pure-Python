@@ -80,33 +80,32 @@ class Account:
                 return creditcard
 
     def email_validation(self, email):
-        parts = email.split("@")
+        parts = str(email).split("@")
         # to make sure that there is only one @ in the string
-        if len(parts) > 2:
+        if len(parts) != 2:
             raise Exception("invalid Email")
         else:
-            username = email.split("@")[0]
-            regex_pattern_1 = r"^[a-zA-Z._\d]+$"
-            match_1 = re.match(regex_pattern_1, username)
+            username = parts[0]
+            match_1 = re.match(r"^[a-zA-Z._\d]", username)
             if match_1 is None:
                 raise Exception("invalid Email")
-            domain = email.split("@")[1].split(".")[0]
-            regex_pattern_2 = r"^[a-zA-Z\d]+$"
-            match_2 = re.match(regex_pattern_2, domain)
-            if match_2 is None:
+            parts = parts[1].split(".")
+            if len(parts) != 2:
                 raise Exception("invalid Email")
-            tld = email.split("@")[1].split(".")[1]
-            regex_pattern_3 = r"^[a-zA-Z]{2,3}$"
-            match_3 = re.match(regex_pattern_3, tld)
-            if match_3 is None:
-                raise Exception("invalid Email")
-            # to make sure that the username has 0 or 1 dot ,i.e, the whole email has at most 2 dots.
-            regex_pattern_4 = r"^([^.]*(\.[^.]*){0,1})$"
-            match_4 = re.match(regex_pattern_4, username)
-            if match_4 is None:
-                raise Exception("invalid Email")
-            if not None in [match_4, match_3, match_2, match_1]:
-                return email
+            else:
+                domain = parts[0]
+                match_2 = re.match(r"^[a-zA-Z]+$", domain)
+                match_3 = re.match(r"^[0-9]$", domain)
+                if match_2 is None and match_3 is None:
+                    raise Exception("invalid Email")
+                tld = parts[1]
+                match_4 = re.match(r"^[a-zA-Z]{2,3}$", tld)
+                if match_4 is None:
+                    raise Exception("invalid Email")
+                if email.count(".") > 2:
+                    raise Exception("invalid Email")
+
+            return email
 
 
 class Order:
